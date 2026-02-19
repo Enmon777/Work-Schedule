@@ -1,0 +1,243 @@
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #e6f0fa 0%, #cddff0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* soft blurred blobs for depth */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle at 30% 30%, rgba( 74, 144, 226, 0.25 ), rgba( 142, 84, 233, 0.2 ));
+            border-radius: 50%;
+            top: -50px;
+            left: -50px;
+            filter: blur(70px);
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            background: radial-gradient(circle at 70% 80%, rgba( 255, 182, 193, 0.25 ), rgba( 255, 215, 0, 0.1 ));
+            border-radius: 50%;
+            bottom: -80px;
+            right: -30px;
+            filter: blur(90px);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            width: 460px;
+            min-height: 520px;
+            z-index: 10;
+            perspective: 1200px;
+        }
+
+        /* card base — smooth glass effect */
+        .form-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(14px) saturate(180%);
+            -webkit-backdrop-filter: blur(14px) saturate(180%);
+            border-radius: 42px;
+            box-shadow: 0 30px 50px -20px rgba(0, 35, 60, 0.3),
+                        inset 0 1px 2px rgba(255,255,255,0.8),
+                        0 0 0 1px rgba(255,255,255,0.4) inset;
+            padding: 38px 36px;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            opacity: 0;
+            transform: translateX(40px) rotateY(-8deg) scale(0.96);
+            pointer-events: none;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .form-container.active {
+            opacity: 1;
+            transform: translateX(0) rotateY(0) scale(1);
+            pointer-events: auto;
+            box-shadow: 0 40px 60px -18px rgba(24, 52, 88, 0.4),
+                        inset 0 0 0 1px rgba(255,255,255,0.7);
+        }
+
+        h2 {
+            font-size: 2.1rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #1a2639;
+            margin-bottom: 28px;
+            padding-left: 6px;
+            background: linear-gradient(135deg, #1e2f4b, #2b3f67);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #2a405c;
+            margin-bottom: 6px;
+            margin-left: 6px;
+            opacity: 0.8;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px 18px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1.5px solid rgba(255,255,255,0.7);
+            border-radius: 32px;
+            font-size: 1rem;
+            color: #162b3a;
+            font-weight: 500;
+            outline: none;
+            transition: 0.2s;
+            box-shadow: 0 6px 12px -8px rgba(0,32,64,0.2), inset 0 0 0 1px rgba(255,255,255,0.8);
+            backdrop-filter: blur(4px);
+        }
+
+        input:focus {
+            border-color: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 22px -12px #1e3f66, inset 0 1px 4px white;
+        }
+
+        input::placeholder {
+            color: #607d9b;
+            font-weight: 300;
+            font-size: 0.95rem;
+            opacity: 0.5;
+        }
+
+        /* cool button – neomorphic with shine */
+        .login-btn {
+            width: 100%;
+            padding: 16px 18px;
+            border: none;
+            border-radius: 40px;
+            background: linear-gradient(115deg, #386e9e, #264d78);
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 12px 24px -12px #102a40, 0 4px 0 0 #10233b inset, 0 -2px 4px 0 rgba(255,255,255,0.5) inset;
+            transition: all 0.2s ease;
+            margin-top: 14px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 22px 28px -16px #0f2e4a, 0 4px 0 0 #1b3857 inset, 0 -2px 6px 0 rgba(255,255,255,0.7) inset;
+            background: linear-gradient(115deg, #3c7bb3, #2c5b8c);
+        }
+
+        .login-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 6px 16px -8px #0a1f2e, 0 2px 0 0 #1b3857 inset;
+        }
+
+        .switch-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 28px;
+            padding-top: 8px;
+            border-top: 2px dashed rgba(74, 144, 226, 0.3);
+        }
+
+        .switch-section p {
+            color: #1e3c5a;
+            font-weight: 450;
+            font-size: 0.95rem;
+        }
+
+        .register-btn {
+            background: transparent;
+            border: none;
+            font-size: 1rem;
+            font-weight: 650;
+            color: #1f4e8c;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 40px;
+            transition: 0.2s;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(4px);
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.7);
+            box-shadow: 0 4px 10px -8px #113352;
+        }
+
+        .register-btn:hover {
+            background: white;
+            color: #0a2b48;
+            border-color: white;
+            box-shadow: 0 10px 18px -14px #02223b;
+            transform: scale(1.02);
+        }
+
+        /* subtle floating icons / luxury detail */
+        .form-container::after {
+            content: '✨';
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-size: 26px;
+            opacity: 0.2;
+            filter: drop-shadow(0 4px 4px white);
+            pointer-events: none;
+        }
+
+        .form-container.signup-container::after {
+            content: '🚀';
+            opacity: 0.2;
+        }
+
+        /* mobile fine-tune */
+        @media (max-width: 500px) {
+            .container { width: 92%; }
+            .form-container { padding: 28px 22px; }
+        }
+
+        /* add a nice grain texture (barely there) */
+        .container::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc0IiBudW1PY3RhdmVzPSIzIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNmKSIgb3BhY2l0eT0iMC4wMjUiIC8+PC9zdmc+');
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 2;
+            border-radius: 42px;
+        }
