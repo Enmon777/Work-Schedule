@@ -1,62 +1,585 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>neomorphism · login / signup</title>
-    <link rel="stylesheet" href="INDstyles.css">   
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NexusCore | Future-Ready Solutions</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(145deg, #f0f7ff 0%, #e9f0fa 100%);
+      color: #0a2b3e;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    /* custom scrollbar (blue accent) */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2edf7;
+      border-radius: 12px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2c7da0;
+      border-radius: 12px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #1f5e7a;
+    }
+
+    /* container & layout */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* HEADER / NAV */
+    .navbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 2px solid rgba(44, 125, 160, 0.2);
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      background: #0f4c5f;
+      width: 44px;
+      height: 44px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: 700;
+      color: white;
+      box-shadow: 0 8px 18px rgba(15, 76, 95, 0.2);
+    }
+
+    .company-name {
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      background: linear-gradient(135deg, #115e7a, #2c7da0);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .tagline {
+      font-size: 0.85rem;
+      color: #4b6a7c;
+      margin-top: 4px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .login-btn {
+      background: #1e6f8c;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .login-btn:hover {
+      background: #0b556e;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -8px rgba(27, 85, 106, 0.4);
+    }
+
+    .login-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* hero section */
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      margin: 60px 0 40px;
+    }
+
+    .hero-text {
+      flex: 1;
+    }
+
+    .hero-text h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(125deg, #115e7a, #1a7b9e, #0f4c5f);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 20px;
+    }
+
+    .hero-text p {
+      font-size: 1.2rem;
+      color: #2c4b5e;
+      margin-bottom: 32px;
+      max-width: 550px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      margin-top: 20px;
+    }
+
+    .stat-item {
+      background: white;
+      padding: 12px 20px;
+      border-radius: 48px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.02);
+      border: 1px solid #cde3ef;
+    }
+
+    .stat-number {
+      font-weight: 800;
+      font-size: 1.8rem;
+      color: #1b6f8c;
+    }
+
+    .hero-image {
+      flex: 1;
+      min-width: 260px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-img-card {
+      background: white;
+      border-radius: 48px;
+      padding: 16px;
+      box-shadow: 0 25px 40px -18px rgba(0, 50, 70, 0.25);
+      transition: transform 0.2s;
+    }
+
+    .hero-img-card img {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 32px;
+      display: block;
+      object-fit: cover;
+    }
+
+    /* company gallery / pictures grid */
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 60px 0 20px 0;
+      position: relative;
+      display: inline-block;
+    }
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 0;
+      width: 60%;
+      height: 4px;
+      background: #2c7da0;
+      border-radius: 4px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      margin: 40px 0 40px;
+    }
+
+    .gallery-card {
+      background: white;
+      border-radius: 28px;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(44, 125, 160, 0.2);
+    }
+
+    .gallery-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 36px -14px rgba(27, 85, 106, 0.25);
+      border-color: #2c7da0;
+    }
+
+    .gallery-card img {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .gallery-card:hover img {
+      transform: scale(1.02);
+    }
+
+    .card-caption {
+      padding: 18px 20px 22px;
+    }
+
+    .card-caption h3 {
+      font-size: 1.35rem;
+      margin-bottom: 8px;
+      color: #0f4c5f;
+    }
+
+    .card-caption p {
+      color: #4a6e82;
+      font-size: 0.9rem;
+    }
+
+    /* company details section (info + mission) */
+    .details-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin: 30px 0 50px;
+      background: white;
+      border-radius: 48px;
+      padding: 40px 36px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04);
+      border: 1px solid #cce4f0;
+    }
+
+    .info-block {
+      flex: 1.5;
+    }
+
+    .info-block h2, .values-block h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #115e7a;
+    }
+
+    .company-desc {
+      margin-bottom: 24px;
+      font-size: 1.05rem;
+      color: #1e3e4f;
+    }
+
+    .contact-details {
+      background: #f4faff;
+      border-radius: 32px;
+      padding: 20px 24px;
+      margin-top: 20px;
+      border-left: 5px solid #2c7da0;
+    }
+
+    .contact-details p {
+      margin: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .values-block {
+      flex: 1;
+      background: #f9fdfe;
+      border-radius: 36px;
+      padding: 20px 26px;
+    }
+
+    .values-list {
+      list-style: none;
+      margin-top: 20px;
+    }
+
+    .values-list li {
+      margin: 18px 0;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .values-list li span:first-child {
+      background: #d9eff7;
+      width: 36px;
+      height: 36px;
+      border-radius: 60px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    /* testimonial / extra info section */
+    .testimonial {
+      background: linear-gradient(115deg, #eef4fc, #ffffff);
+      border-radius: 48px;
+      padding: 40px 36px;
+      margin: 40px 0 60px;
+      text-align: center;
+      border: 1px solid #cde3ef;
+    }
+
+    .testimonial q {
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: #0f4c5f;
+      display: block;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.4;
+    }
+
+    .testimonial-author {
+      margin-top: 24px;
+      font-weight: 600;
+      color: #2c7da0;
+    }
+
+    /* footer */
+    .footer {
+      background: #0a2b3a;
+      color: #cddfe8;
+      border-radius: 48px 48px 0 0;
+      padding: 40px 0 30px;
+      margin-top: 50px;
+    }
+
+    .footer-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    .footer-col p {
+      margin: 10px 0;
+    }
+
+    .footer-col a {
+      color: #b3d9f0;
+      text-decoration: none;
+    }
+
+    .footer-col a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+
+    .copyright {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #2c5a6e;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 780px) {
+      .container {
+        padding: 0 24px;
+      }
+      .hero-text h1 {
+        font-size: 2.2rem;
+      }
+      .navbar {
+        flex-direction: column;
+        gap: 18px;
+      }
+      .details-grid {
+        padding: 28px 22px;
+      }
+      .section-title {
+        font-size: 1.8rem;
+      }
+      .login-btn {
+        padding: 10px 28px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
 
-        <!-- LOGIN CONTAINER (active by default) -->
-        <div class="form-container login-container active">
-            <h2>welcome back</h2>
-            <form id="loginForm">
-                <div class="input-group">
-                    <label>📧 email</label>
-                    <input type="email" placeholder="alex@example.com" required>
-                </div>
-                <div class="input-group">
-                    <label>🔒 password</label>
-                    <input type="password" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="login-btn">log in →</button>
-            </form>
-            <div class="switch-section">
-                <p>no account?</p>
-                <button id="showSignup" class="register-btn">create one ✨</button>
-            </div>
-        </div>
-
-        <!-- SIGNUP CONTAINER (hidden by default) -->
-        <div class="form-container signup-container">
-            <h2>join the club</h2>
-            <form id="signupForm">
-                <div class="input-group">
-                    <label>🧑 full name</label>
-                    <input type="text" placeholder="Alex Rivera" required>
-                </div>
-                <div class="input-group">
-                    <label>📧 email</label>
-                    <input type="email" placeholder="hello@cool.com" required>
-                </div>
-                <div class="input-group">
-                    <label>🔒 password</label>
-                    <input type="password" placeholder="at least 8 characters" required>
-                </div>
-                <button type="submit" class="login-btn">sign up 🚀</button>
-            </form>
-            <div class="switch-section">
-                <p>already have an account?</p>
-                <button id="showLogin" class="register-btn">log in</button>
-            </div>
-        </div>
+<div class="container">
+  <!-- Header & Navigation -->
+  <div class="navbar">
+    <div class="logo-area">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="company-name">NexusCore Dynamics</div>
+        <div class="tagline">engineering tomorrow, today</div>
+      </div>
     </div>
+    <div class="nav-buttons">
+      <!-- LOGIN BUTTON: links to loginnow.html (prepared by you) -->
+      <button class="login-btn" onclick="window.location.href='loginnow.html'">
+        🔐 Log in
+      </button>
+    </div>
+  </div>
 
-    <script src="script.js"></script>
-    <!--<script type="module" src="main.js"></script> will use it after fixing firebase to follow the MVVM model-->
+  <!-- Hero Section with main company overview -->
+  <div class="hero">
+    <div class="hero-text">
+      <h1>Innovation at the speed of trust</h1>
+      <p>Global technology partner delivering AI-driven infrastructure, cloud solutions, and sustainable digital ecosystems.</p>
+      <div class="hero-stats">
+        <div class="stat-item"><span class="stat-number">15+</span> <br>Global Offices</div>
+        <div class="stat-item"><span class="stat-number">1.2k+</span> <br>Experts</div>
+        <div class="stat-item"><span class="stat-number">98%</span> <br>Client Retention</div>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="hero-img-card">
+        <!-- main company picture (placeholder but high quality concept) -->
+        <img src="https://picsum.photos/id/20/500/400" alt="NexusCore headquarters - modern architecture" style="width:100%">
+      </div>
+    </div>
+  </div>
 
+  <!-- Company Details Section (info, mission, contact, values) -->
+  <div class="details-grid">
+    <div class="info-block">
+      <h2>🏢 About NexusCore</h2>
+      <p class="company-desc">Founded in 2012, NexusCore Dynamics has grown into a global leader in digital transformation. We design intelligent systems that bridge hardware, software, and human-centric experiences. With R&D centers across three continents, we focus on creating scalable, ethical technology.</p>
+      <p class="company-desc">Our clients range from Fortune 500 enterprises to fast-growing startups. We're proud to be carbon-neutral since 2021 and continuously invest in green computing initiatives.</p>
+      <div class="contact-details">
+        <p>📍 <strong>Global HQ</strong> — 4510 Innovation Way, Austin, TX 78701</p>
+        <p>📞 <strong>Contact</strong> — +1 (888) 772-9230  |  hello@nexuscore.com</p>
+        <p>🕒 <strong>Support</strong> — 24/7 enterprise support & dedicated account managers</p>
+      </div>
+    </div>
+    <div class="values-block">
+      <h2>⭐ Core values</h2>
+      <ul class="values-list">
+        <li><span>🌱</span> Sustainable by design</li>
+        <li><span>🤝</span> Radical transparency</li>
+        <li><span>🚀</span> Fearless innovation</li>
+        <li><span>🧠</span> People-first AI ethics</li>
+        <li><span>🌍</span> Global collaboration</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- GALLERY / PICTURES section (company culture, workspace, events) -->
+  <div>
+    <h2 class="section-title">📸 Inside NexusCore — moments & spaces</h2>
+    <div class="gallery">
+      <div class="gallery-card">
+        <img src="https://picsum.photos/id/26/500/350" alt="Modern collaborative workspace with blue accents">
+        <div class="card-caption">
+          <h3>Collaboration hub</h3>
+          <p>Open-plan studios designed for synergy and creativity.</p>
+        </div>
+      </div>
+      <div class="gallery-card">
+        <img src="https://picsum.photos/id/106/500/350" alt="Tech lab with engineers working">
+        <div class="card-caption">
+          <h3>Innovation lab</h3>
+          <p>Where prototypes become real-world solutions.</p>
+        </div>
+      </div>
+      <div class="gallery-card">
+        <img src="https://picsum.photos/id/0/500/350" alt="Company event with team members">
+        <div class="card-caption">
+          <h3>Global summit 2025</h3>
+          <p>Annual meetup uniting 800+ visionaries.</p>
+        </div>
+      </div>
+      <div class="gallery-card">
+        <img src="https://picsum.photos/id/169/500/350" alt="Sunset at campus with blue sky">
+        <div class="card-caption">
+          <h3>Sustainable campus</h3>
+          <p>LEED Platinum certified headquarters with green roofs.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- additional information: achievements / roadmap (complementary info) -->
+  <div class="testimonial">
+    <q>Working with NexusCore transformed our infrastructure into an adaptive, intelligent backbone. Their expertise is unmatched.</q>
+    <div class="testimonial-author">— Elena V. , CTO of Solara Industries</div>
+    <div style="margin-top: 28px; font-size: 0.9rem; color: #2c7da0;">⭐ Trusted by 300+ enterprises globally ⭐</div>
+  </div>
+
+  <!-- More details: company milestones / quick facts -->
+  <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; background: #ffffffd9; border-radius: 40px; padding: 24px 32px; margin: 20px 0 20px; border: 1px solid #cde3ef;">
+    <div><strong>🏅 Awards:</strong> 2024 Global Tech Innovator, 2023 Green Future Award</div>
+    <div><strong>📈 YoY Growth:</strong> +47% revenue, expanding to 4 new regions</div>
+    <div><strong>🔐 Security:</strong> ISO 27001 & SOC2 Type II certified</div>
+  </div>
+
+</div> <!-- end container -->
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4 style="color:white; margin-bottom: 12px;">NexusCore Dynamics</h4>
+        <p>Empowering the intelligent edge.</p>
+        <p>© 2025 NexusCore, Inc.</p>
+      </div>
+      <div class="footer-col">
+        <p>📧 careers@nexuscore.com</p>
+        <p>📞 +1 (888) 772-9230</p>
+        <p>🖥️ <a href="#">Privacy & terms</a></p>
+      </div>
+      <div class="footer-col">
+        <p>📍 Austin | Berlin | Singapore | São Paulo</p>
+        <p>🔗 <a href="#">LinkedIn</a>  •  <a href="#">GitHub</a></p>
+      </div>
+    </div>
+    <div class="copyright">
+      <span>🔐 Secure platform — Log in to access your dashboard, reports & resources.</span><br/>
+      <span style="font-size:0.8rem;">Already have an account? Click the <strong style="color:#9fd3f0;">Log in</strong> button to continue to loginnow.html</span>
+    </div>
+  </div>
+</footer>
+
+<!-- additional small script (optional but just to ensure login button works & link behavior) -->
+<script>
+  // guarantee that login button redirects to loginnow.html (same directory)
+  // Also prevents any accidental default if button gets nested weirdly
+  (function() {
+    const loginBtn = document.querySelector('.login-btn');
+    if (loginBtn) {
+      // already has onclick inline, but double-check for robustness
+      loginBtn.addEventListener('click', function(e) {
+        // inline already does location.href, but we ensure no conflict
+        window.location.href = 'loginnow.html';
+      });
+    }
+    // any additional interactive flavor: hover animations are already in CSS
+    console.log('Company page ready — login button links to loginnow.html');
+  })();
+</script>
 </body>
 </html>
