@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>neomorphism · login / signup</title>
+    <link rel="stylesheet" href="INDstyles.css">   
+
+</head>
+<body>
+    <div class="container">
+
+        <!-- LOGIN CONTAINER (active by default) -->
+        <div class="form-container login-container active">
+            <h2>welcome back</h2>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>📧 email</label>
+                    <input id="loginEmail" type="email" placeholder="alex@example.com" required>
+                </div>
+                <div class="input-group">
+                    <label>🔒 password</label>
+                    <input id="loginPassword" type="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="login-btn">log in →</button>
+            </form>
+            <div class="switch-section">
+                <p>no account?</p>
+                <button id="showSignup" class="register-btn" onclick="window.location.href='SignUpPage.html'">create one✨</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App entry point: use module-based auth wiring -->
+    <script type="module" src="main.js"></script>
+
+</body>
+</html>
