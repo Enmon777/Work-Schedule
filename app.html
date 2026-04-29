@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="auth.css">
+
+</head>
+<body>
+
+<div id="toast"></div>
+<div id="loading"><div class="spinner"></div></div>
+
+<!-- MODAL -->
+<div id="modal" class="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">Confirm</h3>
+    <p id="modal-body">Are you sure?</p>
+    <div id="modal-extra"></div>
+    <div class="modal-acts">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-blue" id="modal-confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ LOGIN ═══════════ -->
+<div id="page-login" class="page active">
+  <div class="auth-page">
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-logo"><div class="auth-logo-icon">📅</div><span class="auth-logo-text"><a href="index.html">Company Name & Logo</a></span></div>
+        <h2>Welcome back</h2>
+        <p class="sub">Company slogan</p>
+        <div id="login-alert" class="auth-alert"></div>
+        <div class="inp-grp"><label>Email</label><input type="email" id="login-email" placeholder="you@company.com" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <div class="inp-grp"><label>Password</label><input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <button class="auth-btn" onclick="doLogin()">Sign In →</button>
+        <div class="auth-switch">No account? <a onclick="showPage('page-signup')">Create one</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SIGNUP ═══════════ -->
+<div id="page-signup" class="page">
+  <div class="auth-page">
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-logo"><div class="auth-logo-icon">📅</div><span class="auth-logo-text">Work Schedule</span></div>
+        <h2>Create account</h2>
+        <p class="sub">Admin will assign your role after signup</p>
+        <div id="signup-alert" class="auth-alert"></div>
+        <div class="inp-grp"><label>Full Name</label><input type="text" id="su-name" placeholder="Alex Morgan"></div>
+        <div class="inp-grp"><label>Email</label><input type="email" id="su-email" placeholder="hello@company.com"></div>
+        <div class="inp-grp"><label>Password</label><input type="password" id="su-pass" placeholder="min. 8 characters"></div>
+        <div class="inp-grp"><label>Confirm Password</label><input type="password" id="su-conf" placeholder="••••••••"></div>
+        <button class="auth-btn" onclick="doSignup()">Create Account →</button>
+        <div class="auth-switch">Have an account? <a onclick="showPage('page-login')">Sign in</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PENDING ═══════════ -->
+<div id="page-pending" class="page">
+  <div class="auth-page">
+    <div class="auth-wrap">
+      <div class="auth-card" style="text-align:center;">
+        <div style="font-size:52px;margin-bottom:16px;">⏳</div>
+        <h2>Account Pending</h2>
+        <p class="sub" style="margin-bottom:28px;">Your account is awaiting admin approval. Please check back later.</p>
+        <button class="auth-btn" onclick="doLogout()">Back to Login</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ADMIN DASHBOARD
+══════════════════════════════════════════ -->
+<div id="page-admin" class="page">
+  <div class="dash">
+    <div class="topbar">
+      <div class="topbar-brand"><div class="brand-icon">📅</div><h1>Work Schedule</h1></div>
+      <span class="tb-badge b-admin">Admin</span>
+      <div class="tb-user"><div class="avatar" id="a-avatar">A</div><span id="a-name">Admin</span><span class="tb-clock" id="a-clock"></span></div>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+    <div class="bnav">
+      <div class="bnav-item active" onclick="sTab('admin','overview',this)">📊 Dashboard</div>
+      <div class="bnav-item" onclick="sTab('admin','schedule',this)">📅 Set Schedule</div>
+      <div class="bnav-item" onclick="sTab('admin','teamschedule',this)">👥 Team Schedule</div>
+      <div class="bnav-item" onclick="sTab('admin','employees',this)">🧑‍💼 Employees</div>
+      <div class="bnav-item" onclick="sTab('admin','leaves',this)">🌴 Leave Requests <span class="bnav-dot" id="leave-badge" style="display:none">0</span></div>
+      <div class="bnav-item" onclick="sTab('admin','swaps',this)">🔄 Shift Swaps <span class="bnav-dot" id="swap-badge" style="display:none">0</span></div>
+      <div class="bnav-item" onclick="sTab('admin','approvals',this)">✅ Approvals <span class="bnav-dot" id="appr-badge" style="display:none">0</span></div>
+    </div>
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div id="admin-tp-overview" class="tp active">
+        <div class="stat-row">
+          <div class="stat-box"><div class="lbl">Employees</div><div class="val" id="st-emp">0</div></div>
+          <div class="stat-box"><div class="lbl">Scheduled This Week</div><div class="val green" id="st-sched">0</div></div>
+          <div class="stat-box"><div class="lbl">Total Hours</div><div class="val" id="st-hrs">0h</div></div>
+          <div class="stat-box"><div class="lbl">Leave Requests</div><div class="val warn" id="st-leave">0</div></div>
+          <div class="stat-box"><div class="lbl">Pending Swaps</div><div class="val warn" id="st-swaps">0</div></div>
+          <div class="stat-box"><div class="lbl">Pending Signups</div><div class="val warn" id="st-pend">0</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">📊 Employee Hours This Week</div></div>
+          <div id="ov-list"><div class="empty"><div class="ico">👥</div><p>No employees yet.</p></div></div>
+        </div>
+      </div>
+
+      <!-- SET SCHEDULE -->
+      <div id="admin-tp-schedule" class="tp">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">📅 Set Employee Schedule</div></div>
+          <p style="font-size:13px;color:var(--text3);margin-bottom:18px;">Select an employee and week. Click a day pill to edit shifts. Add multiple shifts per day. Any time overlaps with other employees are flagged automatically.</p>
+          <div class="ifrm">
+            <div class="fld"><label>Employee</label>
+              <select class="app-sel" id="sc-emp"><option value="">-- Select Employee --</option></select>
+            </div>
+            <div class="fld"><label>Week Starting (Mon)</label>
+              <input type="date" class="app-in" id="sc-week" style="min-width:155px;">
+            </div>
+            <button class="btn btn-outline" onclick="loadSchedAdmin()">📂 Load Schedule</button>
+          </div>
+          <div id="sc-editor" style="display:none;">
+            <div class="conflict-banner" id="conflict-banner">
+              <h4>⚠️ Scheduling Conflicts Detected</h4>
+              <div id="conflict-list"></div>
+            </div>
+            <div class="sec-label">Select a day to edit</div>
+            <div class="day-selector" id="day-selector"></div>
+            <div id="day-slot-container"></div>
+            <div class="sec-label" style="margin-top:18px;">Weekly Overview</div>
+            <div class="sched-wrap">
+              <table class="sched-table">
+                <thead><tr id="sc-head-row"><th style="text-align:left;width:70px;">Info</th></tr></thead>
+                <tbody id="sc-overview-body"></tbody>
+              </table>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap;gap:10px;">
+              <div class="wtotal" style="margin:0;">Weekly Total: <span id="sc-total">0h</span></div>
+              <button class="btn btn-blue" onclick="saveSchedAdmin()">💾 Save Schedule</button>
+            </div>
+          </div>
+          <div id="sc-empty" style="color:var(--text3);font-size:13px;padding:10px 0;">Select an employee and week to load their schedule.</div>
+        </div>
+      </div>
+
+      <!-- TEAM SCHEDULE (ADMIN) -->
+      <div id="admin-tp-teamschedule" class="tp">
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-title">👥 Team Schedule</div>
+            <div class="week-nav">
+              <button onclick="changeAdminTeamWeek(-1)">←</button>
+              <span class="week-label" id="admin-team-week-range">—</span>
+              <button onclick="changeAdminTeamWeek(1)">→</button>
+            </div>
+          </div>
+          <p style="font-size:13px;color:var(--text3);margin-bottom:16px;">Full overview of all employees' shifts for the selected week. Click <strong>Edit</strong> to jump to their schedule.</p>
+          <div class="allsched-wrap">
+            <table class="allsched-table">
+              <thead><tr id="admin-allsched-head"></tr></thead>
+              <tbody id="admin-allsched-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMPLOYEES -->
+      <div id="admin-tp-employees" class="tp">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">🧑‍💼 All Employees</div></div>
+          <div style="overflow-x:auto;">
+            <table class="etbl">
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Hours This Week</th><th>Actions</th></tr></thead>
+              <tbody id="emp-tbody"><tr><td colspan="5" style="text-align:center;padding:28px;color:var(--text3);">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEAVE REQUESTS -->
+      <div id="admin-tp-leaves" class="tp">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">🌴 Leave Requests</div></div>
+          <p style="font-size:13px;color:var(--text3);margin-bottom:16px;">Review and approve or decline employee time-off requests.</p>
+          <div id="leave-list"><div class="empty"><div class="ico">🌴</div><p>No leave requests yet.</p></div></div>
+        </div>
+      </div>
+
+      <!-- SHIFT SWAPS (Admin) -->
+      <div id="admin-tp-swaps" class="tp">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">🔄 Shift Swap Requests</div></div>
+          <p style="font-size:13px;color:var(--text3);margin-bottom:16px;">Employee-agreed swaps awaiting your final approval.</p>
+          <div id="admin-swap-list"><div class="empty"><div class="ico">🔄</div><p>No swap requests pending admin review.</p></div></div>
+        </div>
+      </div>
+
+      <!-- APPROVALS -->
+      <div id="admin-tp-approvals" class="tp">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">✅ Pending Approvals</div></div>
+          <p style="font-size:13px;color:var(--text3);margin-bottom:16px;">Assign roles to new sign-ups.</p>
+          <div id="appr-list"><div class="empty"><div class="ico">✅</div><p>No pending approvals.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     EMPLOYEE DASHBOARD
+══════════════════════════════════════════ -->
+<div id="page-employee" class="page">
+  <div class="dash">
+    <div class="topbar">
+      <div class="topbar-brand"><div class="brand-icon">📅</div><h1>Work Schedule</h1></div>
+      <span class="tb-badge b-emp">Employee</span>
+      <div class="tb-user"><div class="avatar" id="e-avatar">E</div><span id="e-name">Employee</span><span class="tb-clock" id="e-clock"></span></div>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+    <div class="bnav">
+      <div class="bnav-item active" onclick="sTab('emp','schedule',this)">📅 My Schedule</div>
+      <div class="bnav-item" onclick="sTab('emp','allschedules',this)">👥 Team Schedule</div>
+      <div class="bnav-item" onclick="sTab('emp','swaps',this)">🔄 Shift Swaps <span class="bnav-dot" id="e-swap-badge" style="display:none">0</span></div>
+      <div class="bnav-item" onclick="sTab('emp','leave',this)">🌴 Request Leave</div>
+      <div class="bnav-item" onclick="sTab('emp','overview',this)">📊 Overview</div>
+    </div>
+    <div class="main">
+
+      <!-- MY SCHEDULE -->
+      <div id="emp-tp-schedule" class="tp active">
+        <div class="nsb">
+          <div><div class="nsb-tag">Next Shift</div><div class="nsb-shift" id="e-next-shift">Loading...</div><div class="nsb-hrs" id="e-next-hrs"></div></div>
+          <div><div class="nsb-clock" id="e-live-clock">--:--</div><div class="nsb-date" id="e-live-date"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-title">📅 Weekly Schedule</div>
+            <div class="week-nav">
+              <button onclick="changeWeek(-1)">←</button>
+              <span class="week-label" id="e-week-range">—</span>
+              <button onclick="changeWeek(1)">→</button>
+            </div>
+            <div style="font-size:22px;font-weight:800;color:var(--brand);" id="e-total">0h</div>
+          </div>
+          <div class="sched-wrap">
+            <table class="sched-table"><thead><tr id="e-sched-head"></tr></thead><tbody id="e-sched-body"></tbody></table>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="hbar-lbl"><span>Weekly progress toward 40h</span><span id="e-bar-lbl">0 / 40h</span></div>
+            <div class="hbar-bg"><div class="hbar-fill" id="e-bar" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEAM SCHEDULE (Employee) -->
+      <div id="emp-tp-allschedules" class="tp">
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-title">👥 Team Schedule</div>
+            <div class="week-nav">
+              <button onclick="changeTeamWeek(-1)">←</button>
+              <span class="week-label" id="team-week-range">—</span>
+              <button onclick="changeTeamWeek(1)">→</button>
+            </div>
+          </div>
+          <p style="font-size:13px;color:var(--text3);margin-bottom:16px;">View everyone's schedule. Click <strong>Swap This Shift</strong> on a specific shift to request a swap for that exact time slot.</p>
+          <div class="allsched-wrap">
+            <table class="allsched-table"><thead><tr id="allsched-head"></tr></thead><tbody id="allsched-body"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHIFT SWAPS (Employee) -->
+      <div id="emp-tp-swaps" class="tp">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">🔄 Shift Swap Requests</div></div>
+          <p style="font-size:13px;color:var(--text3);margin-bottom:16px;">Requests you've sent or received. Once both agree, admin will give final approval.</p>
+          <div id="emp-swap-list"><div class="empty"><div class="ico">🔄</div><p>No swap requests yet.</p></div></div>
+        </div>
+      </div>
+
+      <!-- REQUEST LEAVE -->
+      <div id="emp-tp-leave" class="tp">
+        <div class="leave-form">
+          <h3>📝 New Leave Request</h3>
+          <div class="ifrm" style="margin-bottom:12px;">
+            <div class="fld" style="flex:1;min-width:140px;"><label>Date</label><input type="date" class="app-in" id="lv-date" style="width:100%;"></div>
+            <div class="fld" style="flex:1;min-width:140px;"><label>Type</label>
+              <select class="app-sel" id="lv-type" style="width:100%;">
+                <option>Day Off</option><option>Sick Leave</option><option>Personal Leave</option><option>Emergency</option><option>Vacation</option>
+              </select>
+            </div>
+          </div>
+          <div class="fld" style="width:100%;margin-bottom:12px;"><label>Reason (optional)</label><textarea class="app-in" id="lv-reason" placeholder="Briefly explain your reason..."></textarea></div>
+          <button class="btn btn-blue btn-full" onclick="submitLeave()">Submit Request</button>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">📋 My Leave History</div></div>
+          <div id="e-leave-history"><div class="empty"><div class="ico">📋</div><p>No requests yet.</p></div></div>
+        </div>
+      </div>
+
+      <!-- OVERVIEW -->
+      <div id="emp-tp-overview" class="tp">
+        <div class="stat-row">
+          <div class="stat-box"><div class="lbl">This Week</div><div class="val" id="es-week">0h</div></div>
+          <div class="stat-box"><div class="lbl">Working Days</div><div class="val green" id="es-days">0</div></div>
+          <div class="stat-box"><div class="lbl">Days Off</div><div class="val" id="es-off">7</div></div>
+          <div class="stat-box"><div class="lbl">Avg / Day</div><div class="val" id="es-avg">0h</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">📆 Day-by-Day Breakdown</div></div>
+          <div id="e-breakdown"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,updateProfile,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import{getFirestore,doc,setDoc,getDoc,updateDoc,collection,onSnapshot,addDoc,getDocs}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyBigIOWdExE9RgYqzLnbvZ4sHh01IwJovk",authDomain:"work-schedule-f4e6c.firebaseapp.com",projectId:"work-schedule-f4e6c",storageBucket:"work-schedule-f4e6c.firebasestorage.app",messagingSenderId:"924505056564",appId:"1:924505056564:web:9271df34ff703e2112b161"};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DAYS_FULL=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+let currentUser=null,currentRole=null,currentUserData=null;
+let currentWeekStart=getMonday(),teamWeekStart=getMonday(),adminTeamWeekStart=getMonday();
+let unsub1=null,unsub2=null,unsub3=null;
+let adminSchedData={},adminSchedEmployee=null,adminSchedWeek=null,selectedDayIdx=0;
+// All other employees' schedules for conflict detection
+let otherEmployeesScheds=[];
+
+// ─── EXPOSE ───
+window.showPage=showPage;window.doLogin=doLogin;window.doSignup=doSignup;window.doLogout=doLogout;
+window.sTab=sTab;window.loadSchedAdmin=loadSchedAdmin;window.saveSchedAdmin=saveSchedAdmin;
+window.approveUser=approveUser;window.changeRole=changeRole;window.removeEmployee=removeEmployee;
+window.submitLeave=submitLeave;window.handleLeave=handleLeave;window.closeModal=closeModal;
+window.changeWeek=changeWeek;window.changeTeamWeek=changeTeamWeek;window.changeAdminTeamWeek=changeAdminTeamWeek;
+window.selectDay=selectDay;window.addSlot=addSlot;window.removeSlot=removeSlot;
+window.requestSwap=requestSwap;window.respondSwap=respondSwap;window.adminHandleSwap=adminHandleSwap;
+window.updateSlot=updateSlot;window.quickSetSchedule=quickSetSchedule;
+
+// ─── UTILS ───
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function loading(on){document.getElementById('loading').style.display=on?'flex':'none';}
+function toast(msg,type=''){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='show'+(type?' t-'+type:'');
+  clearTimeout(t._tid);t._tid=setTimeout(()=>t.className='',3400);
+}
+function initials(n){return(n||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function getMonday(d=new Date()){
+  const c=new Date(d);const day=c.getDay();
+  c.setDate(c.getDate()-day+(day===0?-6:1));c.setHours(0,0,0,0);return c;
+}
+function dateKey(d){return d.toISOString().slice(0,10);}
+function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function fmtTime(t){
+  if(!t)return'';
+  const[hh,mm]=t.split(':').map(Number);
+  const ampm=hh>=12?'PM':'AM';const h=hh%12||12;
+  return`${h}:${mm.toString().padStart(2,'0')} ${ampm}`;
+}
+function timeDiff(s,e){
+  if(!s||!e)return 0;
+  const[sh,sm]=s.split(':').map(Number),[eh,em]=e.split(':').map(Number);
+  return Math.max(0,(eh*60+em-sh*60-sm)/60);
+}
+function toMins(t){if(!t)return 0;const[h,m]=t.split(':').map(Number);return h*60+m;}
+function slotsOverlap(a,b){
+  // a={s,e}, b={s,e} — returns true if they overlap
+  if(!a.s||!a.e||!b.s||!b.e)return false;
+  return toMins(a.s)<toMins(b.e)&&toMins(b.s)<toMins(a.e);
+}
+function startClock(id){
+  const tick=()=>{const el=document.getElementById(id);if(el)el.textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});};
+  tick();return setInterval(tick,1000);
+}
+function openModal(title,body,onConfirm,confirmLabel='Confirm',danger=false,extraHTML=''){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').textContent=body;
+  document.getElementById('modal-extra').innerHTML=extraHTML;
+  const btn=document.getElementById('modal-confirm');
+  btn.textContent=confirmLabel;btn.className='btn '+(danger?'btn-danger':'btn-blue');
+  btn.onclick=()=>{closeModal();onConfirm();};
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+
+// ─── AUTH ───
+onAuthStateChanged(auth,async user=>{
+  if(!user){showPage('page-login');loading(false);return;}
+  currentUser=user;
+  const snap=await getDoc(doc(db,'users',user.uid));
+  if(!snap.exists()){
+    await setDoc(doc(db,'users',user.uid),{uid:user.uid,name:user.displayName||user.email,email:user.email,role:'pending',createdAt:new Date().toISOString()});
+    currentRole='pending';
+  }else{currentRole=snap.data().role;currentUserData=snap.data();}
+  loading(false);
+  if(currentRole==='admin')initAdmin(snap.data());
+  else if(currentRole==='employee')initEmployee(snap.data());
+  else showPage('page-pending');
+});
+
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-password').value;
+  const al=document.getElementById('login-alert');al.className='auth-alert';
+  if(!email||!pass){al.className='auth-alert err';al.textContent='Please fill all fields.';return;}
+  loading(true);
+  try{await signInWithEmailAndPassword(auth,email,pass);}
+  catch(e){loading(false);al.className='auth-alert err';al.textContent=e.code==='auth/invalid-credential'?'Incorrect email or password.':e.message;}
+}
+async function doSignup(){
+  const name=document.getElementById('su-name').value.trim();
+  const email=document.getElementById('su-email').value.trim();
+  const pass=document.getElementById('su-pass').value;
+  const conf=document.getElementById('su-conf').value;
+  const al=document.getElementById('signup-alert');al.className='auth-alert';
+  if(!name||!email||!pass||!conf){al.className='auth-alert err';al.textContent='Please fill all fields.';return;}
+  if(pass!==conf){al.className='auth-alert err';al.textContent='Passwords do not match.';return;}
+  if(pass.length<8){al.className='auth-alert err';al.textContent='Password must be at least 8 characters.';return;}
+  loading(true);
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,pass);
+    await updateProfile(cred.user,{displayName:name});
+    await setDoc(doc(db,'users',cred.user.uid),{uid:cred.user.uid,name,email,role:'pending',createdAt:new Date().toISOString()});
+    toast('Account created! Awaiting admin approval.','ok');
+  }catch(e){loading(false);al.className='auth-alert err';al.textContent=e.code==='auth/email-already-in-use'?'Email already registered.':e.message;}
+}
+async function doLogout(){
+  [unsub1,unsub2,unsub3].forEach(u=>u&&u());
+  unsub1=unsub2=unsub3=null;
+  await signOut(auth);currentUser=null;currentRole=null;currentUserData=null;showPage('page-login');
+}
+
+// ─── TABS ───
+function sTab(dash,tab,el){
+  const pid=dash==='admin'?'page-admin':'page-employee';
+  const pfx=dash==='admin'?'admin':'emp';
+  document.querySelectorAll(`#${pid} .bnav-item`).forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.querySelectorAll(`#${pid} .tp`).forEach(p=>p.classList.remove('active'));
+  document.getElementById(`${pfx}-tp-${tab}`)?.classList.add('active');
+  if(dash==='emp'&&tab==='allschedules')loadTeamSchedule();
+  if(dash==='admin'&&tab==='teamschedule')loadAdminTeamSchedule();
+}
+
+// ════════════════════════════════
+// ADMIN INIT
+// ════════════════════════════════
+function initAdmin(ud){
+  showPage('page-admin');
+  document.getElementById('a-name').textContent=ud.name||'Admin';
+  document.getElementById('a-avatar').textContent=initials(ud.name);
+  startClock('a-clock');
+  document.getElementById('sc-week').value=dateKey(getMonday());
+
+  unsub1=onSnapshot(collection(db,'users'),snap=>{renderAdminUsers(snap.docs.map(d=>d.data()));});
+  unsub2=onSnapshot(collection(db,'leaves'),snap=>{renderLeaves(snap.docs.map(d=>({id:d.id,...d.data()})));});
+  unsub3=onSnapshot(collection(db,'swaps'),snap=>{renderAdminSwaps(snap.docs.map(d=>({id:d.id,...d.data()})));});
+}
+
+async function renderAdminUsers(allUsers){
+  const employees=allUsers.filter(u=>u.role==='employee');
+  const pending=allUsers.filter(u=>u.role==='pending');
+  document.getElementById('st-emp').textContent=employees.length;
+  document.getElementById('st-pend').textContent=pending.length;
+  const ab=document.getElementById('appr-badge');
+  ab.style.display=pending.length?'inline':'none';ab.textContent=pending.length;
+
+  const monday=getMonday(),weekId=dateKey(monday);
+  const results=await Promise.all(employees.map(emp=>
+    getDoc(doc(db,'schedules',`${emp.uid}_${weekId}`)).then(s=>({emp,sched:s.exists()?s.data():null}))
+  ));
+  let totalHrs=0,schedCount=0;
+  results.forEach(r=>{
+    if(r.sched){const h=getDayHoursFromSched(r.sched);const tot=Object.values(h).reduce((a,b)=>a+b,0);if(tot>0){totalHrs+=tot;schedCount++;}}
+  });
+  document.getElementById('st-hrs').textContent=totalHrs.toFixed(1)+'h';
+  document.getElementById('st-sched').textContent=schedCount;
+
+  // hours bars
+  const ovEl=document.getElementById('ov-list');
+  if(!employees.length){ovEl.innerHTML=`<div class="empty"><div class="ico">👥</div><p>No employees yet.</p></div>`;return;}
+  ovEl.innerHTML=results.map(r=>{
+    const h=r.sched?getDayHoursFromSched(r.sched):{};
+    const tot=Object.values(h).reduce((a,b)=>a+b,0);
+    return`<div class="hbar-wrap"><div class="hbar-lbl"><span>${r.emp.name}</span><span>${tot.toFixed(1)}h / 40h</span></div><div class="hbar-bg"><div class="hbar-fill" style="width:${Math.min(100,(tot/40)*100)}%"></div></div></div>`;
+  }).join('');
+
+  // employee table
+  const tbody=document.getElementById('emp-tbody');
+  tbody.innerHTML=results.map(r=>{
+    const h=r.sched?getDayHoursFromSched(r.sched):{};
+    const tot=Object.values(h).reduce((a,b)=>a+b,0);
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar" style="width:28px;height:28px;font-size:10px;">${initials(r.emp.name)}</div><strong>${r.emp.name}</strong></div></td>
+      <td style="color:var(--text3);">${r.emp.email}</td>
+      <td><span class="rbadge rb-emp">Employee</span></td>
+      <td><strong style="color:var(--brand);">${tot.toFixed(1)}h</strong></td>
+      <td><div style="display:flex;gap:5px;flex-wrap:wrap;">
+        <button class="btn btn-blue btn-sm" onclick="quickSetSchedule('${r.emp.uid}')">📅 Set Schedule</button>
+        <button class="btn btn-outline btn-sm" onclick="changeRole('${r.emp.uid}','admin')">Make Admin</button>
+        <button class="btn btn-danger btn-sm" onclick="removeEmployee('${r.emp.uid}')">Remove</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  // schedule dropdown
+  const sel=document.getElementById('sc-emp'),prev=sel.value;
+  sel.innerHTML='<option value="">-- Select Employee --</option>'+employees.map(e=>`<option value="${e.uid}">${e.name}</option>`).join('');
+  if(prev)sel.value=prev;
+
+  // approvals
+  const apEl=document.getElementById('appr-list');
+  if(!pending.length){apEl.innerHTML=`<div class="empty"><div class="ico">✅</div><p>No pending approvals.</p></div>`;return;}
+  apEl.innerHTML=pending.map(u=>`
+    <div class="appr-row">
+      <div class="avatar">${initials(u.name)}</div>
+      <div class="appr-info"><div class="appr-name">${u.name}</div><div class="appr-sub">${u.email} · Joined ${new Date(u.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div></div>
+      <span class="rbadge rb-pend">Pending</span>
+      <div class="appr-acts">
+        <button class="btn btn-blue btn-sm" onclick="approveUser('${u.uid}','employee')">✓ Approve</button>
+        <button class="btn btn-outline btn-sm" onclick="approveUser('${u.uid}','admin')">As Admin</button>
+      </div>
+    </div>`).join('');
+}
+
+function quickSetSchedule(uid){
+  document.getElementById('sc-emp').value=uid;
+  sTab('admin','schedule',document.querySelectorAll('#page-admin .bnav-item')[1]);
+  loadSchedAdmin();
+}
+
+function renderLeaves(leaves){
+  const pending=leaves.filter(l=>l.status==='pending');
+  document.getElementById('st-leave').textContent=pending.length;
+  const lb=document.getElementById('leave-badge');
+  lb.style.display=pending.length?'inline':'none';lb.textContent=pending.length;
+  const el=document.getElementById('leave-list');
+  if(!leaves.length){el.innerHTML=`<div class="empty"><div class="ico">🌴</div><p>No leave requests yet.</p></div>`;return;}
+  const sorted=[...leaves].sort((a,b)=>{
+    if(a.status==='pending'&&b.status!=='pending')return -1;
+    if(b.status==='pending'&&a.status!=='pending')return 1;
+    return new Date(b.date)-new Date(a.date);
+  });
+  el.innerHTML=sorted.map(l=>{
+    const chip=l.status==='pending'?`<span class="chip ch-yellow">Pending</span>`:l.status==='approved'?`<span class="chip ch-green">Approved</span>`:`<span class="chip ch-red">Declined</span>`;
+    const d=new Date(l.date+'T00:00:00');
+    return`<div class="leave-row">
+      <div style="font-size:26px;">🌴</div>
+      <div class="leave-info">
+        <div class="leave-name">${l.empName||'Employee'}</div>
+        <div class="leave-detail">${l.type} · ${d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'short',day:'numeric'})}</div>
+        ${l.reason?`<div class="leave-reason">"${l.reason}"</div>`:''}
+      </div>${chip}
+      ${l.status==='pending'?`<div class="appr-acts">
+        <button class="btn btn-success btn-sm" onclick="handleLeave('${l.id}','approved')">✓ Approve</button>
+        <button class="btn btn-danger btn-sm" onclick="handleLeave('${l.id}','declined')">Decline</button>
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function renderAdminSwaps(swaps){
+  const pending=swaps.filter(s=>s.status==='employee_accepted');
+  document.getElementById('st-swaps').textContent=pending.length;
+  const sb=document.getElementById('swap-badge');
+  sb.style.display=pending.length?'inline':'none';sb.textContent=pending.length;
+  const el=document.getElementById('admin-swap-list');
+  if(!pending.length){el.innerHTML=`<div class="empty"><div class="ico">🔄</div><p>No swap requests pending review.</p></div>`;return;}
+  el.innerHTML=pending.map(s=>`
+    <div class="swap-row pending-swap">
+      <div style="font-size:26px;">🔄</div>
+      <div class="swap-info">
+        <div class="swap-title">${s.requesterName} ↔ ${s.targetName}</div>
+        <div class="swap-detail">
+          <strong>${s.requesterName}</strong> wants to swap their <strong>${DAYS_FULL[s.requesterDayIdx]}</strong>
+          shift <em>(${s.requesterShiftLabel||'?'})</em>
+          with <strong>${s.targetName}</strong>'s <strong>${DAYS_FULL[s.targetDayIdx]}</strong>
+          shift <em>(${s.targetShiftLabel||'?'})</em>
+          · Week: ${s.weekId}
+        </div>
+        ${s.message?`<div class="leave-reason">"${s.message}"</div>`:''}
+        <div class="swap-badges"><span class="chip ch-green">✓ Both employees agreed</span></div>
+      </div>
+      <div class="appr-acts">
+        <button class="btn btn-success btn-sm" onclick="adminHandleSwap('${s.id}','approved')">✓ Approve Swap</button>
+        <button class="btn btn-danger btn-sm" onclick="adminHandleSwap('${s.id}','declined')">Decline</button>
+      </div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════
+// ADMIN SCHEDULE — DAY-BASED MULTI-SLOT + CONFLICT DETECTION
+// ════════════════════════════════
+function getDayHoursFromSched(data){
+  const hours={};
+  for(let i=0;i<7;i++){
+    const slots=data['d'+i]||[];
+    if(!slots.length&&data['s'+i]&&data['e'+i])hours[i]=timeDiff(data['s'+i],data['e'+i]);
+    else hours[i]=slots.reduce((a,sl)=>a+timeDiff(sl.s,sl.e),0);
+  }
+  return hours;
+}
+function getDaySlotsFromData(data,i){
+  const slots=data['d'+i]||[];
+  if(!slots.length&&data['s'+i]&&data['e'+i])return[{s:data['s'+i],e:data['e'+i]}];
+  return slots;
+}
+
+async function loadSchedAdmin(){
+  const uid=document.getElementById('sc-emp').value;
+  const week=document.getElementById('sc-week').value;
+  if(!uid||!week){toast('Select an employee and week first.','err');return;}
+  loading(true);
+  adminSchedEmployee=uid;adminSchedWeek=week;
+
+  // Load target employee schedule
+  const snap=await getDoc(doc(db,'schedules',`${uid}_${week}`));
+  const raw=snap.exists()?snap.data():{};
+  adminSchedData={};
+  for(let i=0;i<7;i++){
+    if(raw['d'+i])adminSchedData[i]=[...raw['d'+i]];
+    else if(raw['s'+i]&&raw['e'+i])adminSchedData[i]=[{s:raw['s'+i],e:raw['e'+i]}];
+    else adminSchedData[i]=[];
+  }
+
+  // Load all other employees' schedules for conflict detection
+  const usersSnap=await getDocs(collection(db,'users'));
+  const otherEmps=usersSnap.docs.map(d=>d.data()).filter(u=>u.role==='employee'&&u.uid!==uid);
+  otherEmployeesScheds=await Promise.all(otherEmps.map(emp=>
+    getDoc(doc(db,'schedules',`${emp.uid}_${week}`)).then(s=>({name:emp.name,sched:s.exists()?s.data():null}))
+  ));
+
+  loading(false);
+  document.getElementById('sc-editor').style.display='block';
+  document.getElementById('sc-empty').style.display='none';
+  renderDaySelector(week);
+  selectDay(0);
+  checkConflicts();
+}
+
+// ─── CONFLICT DETECTION ───
+function checkConflicts(){
+  const conflicts=[];
+  for(let dayIdx=0;dayIdx<7;dayIdx++){
+    const mySlots=(adminSchedData[dayIdx]||[]).filter(sl=>sl.s&&sl.e);
+    mySlots.forEach((mySlot,si)=>{
+      otherEmployeesScheds.forEach(other=>{
+        if(!other.sched)return;
+        const theirSlots=getDaySlotsFromData(other.sched,dayIdx).filter(sl=>sl.s&&sl.e);
+        theirSlots.forEach(theirSlot=>{
+          if(slotsOverlap(mySlot,theirSlot)){
+            conflicts.push({day:DAYS_FULL[dayIdx],empName:other.name,myTime:`${fmtTime(mySlot.s)}–${fmtTime(mySlot.e)}`,theirTime:`${fmtTime(theirSlot.s)}–${fmtTime(theirSlot.e)}`});
+          }
+        });
+      });
+    });
+  }
+  const banner=document.getElementById('conflict-banner');
+  const list=document.getElementById('conflict-list');
+  if(conflicts.length){
+    banner.classList.add('visible');
+    list.innerHTML=conflicts.map(c=>`<div class="conflict-item">⚠️ <strong>${c.day}</strong>: Your slot <strong>${c.myTime}</strong> overlaps with <strong>${c.empName}</strong>'s shift <strong>${c.theirTime}</strong></div>`).join('');
+  }else{
+    banner.classList.remove('visible');
+    list.innerHTML='';
+  }
+  return conflicts.length>0;
+}
+
+function renderDaySelector(week){
+  const monday=new Date(week+'T00:00:00');
+  const today=dateKey(new Date());
+  const ds=document.getElementById('day-selector');
+  ds.innerHTML=DAYS.map((d,i)=>{
+    const dt=new Date(monday);dt.setDate(monday.getDate()+i);
+    const isT=dateKey(dt)===today;
+    const cnt=(adminSchedData[i]||[]).filter(sl=>sl.s&&sl.e).length;
+    return`<button class="day-btn${i===selectedDayIdx?' active':''}${cnt>0?' has-shifts':''}" onclick="selectDay(${i})" id="daybtn-${i}">
+      ${d} <span style="font-size:10px;opacity:.75;">${fmtDate(dt)}</span>
+      ${cnt>0?`<span class="chip ch-blue" style="font-size:9px;padding:1px 6px;">${cnt}</span>`:''}
+      ${isT?`<span style="font-size:9px;background:rgba(255,255,255,.3);border-radius:4px;padding:1px 5px;">Today</span>`:''}
+    </button>`;
+  }).join('');
+  renderOverviewTable(week);
+}
+
+function selectDay(idx){
+  selectedDayIdx=idx;
+  document.querySelectorAll('.day-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  renderDaySlotEditor(idx);
+}
+
+function renderDaySlotEditor(idx){
+  const slots=adminSchedData[idx]||[];
+  const week=adminSchedWeek||document.getElementById('sc-week').value;
+  const monday=new Date(week+'T00:00:00');
+  const dt=new Date(monday);dt.setDate(monday.getDate()+idx);
+  const container=document.getElementById('day-slot-container');
+
+  // Find which slot indices have conflicts on this day
+  const conflictSlots=new Set();
+  slots.forEach((mySlot,si)=>{
+    if(!mySlot.s||!mySlot.e)return;
+    otherEmployeesScheds.forEach(other=>{
+      if(!other.sched)return;
+      const theirSlots=getDaySlotsFromData(other.sched,idx).filter(sl=>sl.s&&sl.e);
+      if(theirSlots.some(ts=>slotsOverlap(mySlot,ts)))conflictSlots.add(si);
+    });
+  });
+
+  let html=`<div class="day-slot-editor">
+    <h4>
+      <span>${DAYS_FULL[idx]} — ${fmtDate(dt)}</span>
+      <button class="btn btn-blue btn-sm" onclick="addSlot(${idx})">+ Add Shift</button>
+    </h4>`;
+  if(!slots.length){
+    html+=`<p style="color:var(--text3);font-size:13px;">No shifts scheduled. Click <strong>+ Add Shift</strong> to add one.</p>`;
+  }else{
+    slots.forEach((sl,si)=>{
+      const isConflict=conflictSlots.has(si);
+      html+=`<div class="slot-entry${isConflict?' has-conflict':''}">
+        <div class="slot-fld"><label>Start Time</label><input class="time-input${isConflict?' conflict':''}" type="time" value="${sl.s||''}" oninput="updateSlot(${idx},${si},'s',this.value)"></div>
+        <div class="slot-fld"><label>End Time</label><input class="time-input${isConflict?' conflict':''}" type="time" value="${sl.e||''}" oninput="updateSlot(${idx},${si},'e',this.value)"></div>
+        <button class="remove-slot-btn" onclick="removeSlot(${idx},${si})" title="Remove shift">✕</button>
+      </div>
+      ${isConflict?`<p style="font-size:11px;color:var(--red);margin:-4px 0 8px 4px;">⚠️ This time overlaps with another employee's shift</p>`:''}`;
+    });
+  }
+  html+=`<button class="add-slot-btn" onclick="addSlot(${idx})">+ Add another shift on ${DAYS[idx]}</button></div>`;
+  container.innerHTML=html;
+}
+
+function addSlot(dayIdx){
+  if(!adminSchedData[dayIdx])adminSchedData[dayIdx]=[];
+  adminSchedData[dayIdx].push({s:'',e:''});
+  renderDaySlotEditor(dayIdx);
+  refreshDayBtn(dayIdx);
+  calcHrs();
+}
+function removeSlot(dayIdx,slotIdx){
+  adminSchedData[dayIdx].splice(slotIdx,1);
+  renderDaySlotEditor(dayIdx);
+  refreshDayBtn(dayIdx);
+  calcHrs();
+  checkConflicts();
+}
+function updateSlot(dayIdx,slotIdx,field,val){
+  if(!adminSchedData[dayIdx]||adminSchedData[dayIdx][slotIdx]===undefined)return;
+  adminSchedData[dayIdx][slotIdx][field]=val;
+  calcHrs();
+  checkConflicts();
+  // Re-render slot editor to update conflict highlights
+  renderDaySlotEditor(dayIdx);
+}
+function refreshDayBtn(dayIdx){
+  const week=adminSchedWeek||document.getElementById('sc-week').value;
+  const monday=new Date(week+'T00:00:00');
+  const dt=new Date(monday);dt.setDate(monday.getDate()+dayIdx);
+  const today=dateKey(new Date());const isT=dateKey(dt)===today;
+  const cnt=(adminSchedData[dayIdx]||[]).filter(sl=>sl.s&&sl.e).length;
+  const btn=document.getElementById('daybtn-'+dayIdx);if(!btn)return;
+  btn.className=`day-btn${dayIdx===selectedDayIdx?' active':''}${cnt>0?' has-shifts':''}`;
+  btn.innerHTML=`${DAYS[dayIdx]} <span style="font-size:10px;opacity:.75;">${fmtDate(dt)}</span>
+    ${cnt>0?`<span class="chip ch-blue" style="font-size:9px;padding:1px 6px;">${cnt}</span>`:''}
+    ${isT?`<span style="font-size:9px;background:rgba(255,255,255,.3);border-radius:4px;padding:1px 5px;">Today</span>`:''}`;
+}
+function calcHrs(){
+  let total=0;
+  for(let i=0;i<7;i++){const slots=adminSchedData[i]||[];total+=slots.reduce((a,sl)=>a+timeDiff(sl.s,sl.e),0);}
+  const el=document.getElementById('sc-total');if(el)el.textContent=total.toFixed(1)+'h';
+  const week=adminSchedWeek||document.getElementById('sc-week').value;
+  if(week)renderOverviewTable(week);
+}
+function renderOverviewTable(week){
+  if(!week)return;
+  const monday=new Date(week+'T00:00:00');
+  const today=dateKey(new Date());
+  const headRow=document.getElementById('sc-head-row');if(!headRow)return;
+  headRow.innerHTML='<th style="text-align:left;width:80px;">Info</th>'+DAYS.map((d,i)=>{
+    const dt=new Date(monday);dt.setDate(monday.getDate()+i);
+    const isT=dateKey(dt)===today;
+    return`<th class="${isT?'today-th':''}">${d}<br><span style="font-weight:400;font-size:10px;opacity:.8;">${fmtDate(dt)}</span></th>`;
+  }).join('');
+  const body=document.getElementById('sc-overview-body');if(!body)return;
+  const shiftsRow='<tr><td class="row-label">Shifts</td>'+DAYS.map((_,i)=>{
+    const slots=(adminSchedData[i]||[]).filter(sl=>sl.s&&sl.e);
+    if(!slots.length)return`<td><div class="shift-display off">Off</div></td>`;
+    return`<td><div class="slot-wrap">${slots.map(sl=>`<div class="shift-display">${fmtTime(sl.s)}<br>–<br>${fmtTime(sl.e)}</div>`).join('')}</div></td>`;
+  }).join('')+'</tr>';
+  const hoursRow='<tr><td class="row-label" style="color:var(--brand);">Hours</td>'+DAYS.map((_,i)=>{
+    const slots=adminSchedData[i]||[];const h=slots.reduce((a,sl)=>a+timeDiff(sl.s,sl.e),0);
+    return`<td style="text-align:center;font-weight:700;color:${h>0?'var(--brand)':'var(--text3)'};font-size:12px;">${h>0?h.toFixed(1)+'h':'—'}</td>`;
+  }).join('')+'</tr>';
+  body.innerHTML=shiftsRow+hoursRow;
+}
+async function saveSchedAdmin(){
+  const uid=adminSchedEmployee,week=adminSchedWeek;
+  if(!uid||!week){toast('No schedule loaded.','err');return;}
+  const hasConflicts=checkConflicts();
+  if(hasConflicts){
+    openModal('Conflicts Detected','There are time overlaps with other employees. Save anyway?',async()=>{
+      await doSave(uid,week);
+    },'Save Anyway',true);
+    return;
+  }
+  await doSave(uid,week);
+}
+async function doSave(uid,week){
+  loading(true);
+  const data={uid,weekId:week};
+  for(let i=0;i<7;i++){
+    data['d'+i]=(adminSchedData[i]||[]).filter(sl=>sl.s&&sl.e);
+    const first=data['d'+i][0];
+    data['s'+i]=first?first.s:'';data['e'+i]=first?first.e:'';
+  }
+  await setDoc(doc(db,'schedules',`${uid}_${week}`),data);
+  loading(false);toast('Schedule saved! ✓','ok');
+  calcHrs();
+}
+
+// ─── ADMIN TEAM SCHEDULE ───
+async function loadAdminTeamSchedule(){
+  const monday=adminTeamWeekStart;
+  const weekId=dateKey(monday);
+  const endW=new Date(monday);endW.setDate(monday.getDate()+6);
+  document.getElementById('admin-team-week-range').textContent=`${fmtDate(monday)} – ${fmtDate(endW)}`;
+  const usersSnap=await getDocs(collection(db,'users'));
+  const employees=usersSnap.docs.map(d=>d.data()).filter(u=>u.role==='employee');
+  const schedResults=await Promise.all(employees.map(emp=>
+    getDoc(doc(db,'schedules',`${emp.uid}_${weekId}`)).then(s=>({emp,sched:s.exists()?s.data():null}))
+  ));
+  const today=dateKey(new Date());
+  const headEl=document.getElementById('admin-allsched-head');
+  headEl.innerHTML='<th>Employee</th>'+DAYS.map((d,i)=>{
+    const dt=new Date(monday);dt.setDate(monday.getDate()+i);
+    const isT=dateKey(dt)===today;
+    return`<th class="${isT?'today-col':''}">${d}<br><span style="font-weight:400;">${fmtDate(dt)}</span></th>`;
+  }).join('')+'<th>Actions</th>';
+  const body=document.getElementById('admin-allsched-body');
+  if(!schedResults.length){body.innerHTML=`<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--text3);">No employees found.</td></tr>`;return;}
+  const hours_map=schedResults.map(r=>({name:r.emp.name,tot:Object.values(r.sched?getDayHoursFromSched(r.sched):{}).reduce((a,b)=>a+b,0)}));
+  body.innerHTML=schedResults.map((r,ri)=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar" style="width:26px;height:26px;font-size:10px;">${initials(r.emp.name)}</div><div><strong style="font-size:13px;">${r.emp.name}</strong><br><span style="font-size:10px;color:var(--text3);">${hours_map[ri].tot.toFixed(1)}h this week</span></div></div></td>
+    ${DAYS.map((_,i)=>{
+      if(!r.sched)return`<td><span class="day-off-pill">Off</span></td>`;
+      const slots=getDaySlotsFromData(r.sched,i).filter(sl=>sl.s&&sl.e);
+      if(!slots.length)return`<td><span class="day-off-pill">Off</span></td>`;
+      return`<td><div class="day-shift-cell">${slots.map(sl=>`<span class="day-shift-pill">${fmtTime(sl.s)}–${fmtTime(sl.e)}</span>`).join('')}</div></td>`;
+    }).join('')}
+    <td><button class="btn btn-outline btn-sm" onclick="quickSetSchedule('${r.emp.uid}')">✏️ Edit</button></td>
+  </tr>`).join('');
+}
+function changeAdminTeamWeek(dir){
+  adminTeamWeekStart=new Date(adminTeamWeekStart);
+  adminTeamWeekStart.setDate(adminTeamWeekStart.getDate()+(dir*7));
+  loadAdminTeamSchedule();
+}
+
+// ─── ADMIN ACTIONS ───
+async function approveUser(uid,role){loading(true);await updateDoc(doc(db,'users',uid),{role});loading(false);toast(`Approved as ${role}!`,'ok');}
+async function changeRole(uid,role){
+  openModal('Change Role',`Change this user to ${role}?`,async()=>{loading(true);await updateDoc(doc(db,'users',uid),{role});loading(false);toast('Role updated.','ok');},'Confirm');
+}
+async function removeEmployee(uid){
+  openModal('Remove Employee','This will remove the employee from the system.',async()=>{loading(true);await updateDoc(doc(db,'users',uid),{role:'removed'});loading(false);toast('Employee removed.','ok');},'Remove',true);
+}
+async function handleLeave(leaveId,status){
+  openModal(status==='approved'?'Approve Leave':'Decline Leave',`Are you sure you want to ${status} this request?`,async()=>{
+    loading(true);await updateDoc(doc(db,'leaves',leaveId),{status,decidedAt:new Date().toISOString()});loading(false);
+    toast(status==='approved'?'Leave approved!':'Leave declined.',status==='approved'?'ok':'err');
+  },status==='approved'?'Approve':'Decline',status==='declined');
+}
+async function adminHandleSwap(swapId,status){
+  openModal(status==='approved'?'Approve Swap':'Decline Swap','Are you sure? Approving will update both schedules.',async()=>{
+    loading(true);
+    const snapSwap=await getDoc(doc(db,'swaps',swapId));
+    if(!snapSwap.exists()){loading(false);toast('Swap not found.','err');return;}
+    const sw=snapSwap.data();
+    if(status==='approved'){
+      const reqSnap=await getDoc(doc(db,'schedules',`${sw.requesterId}_${sw.weekId}`));
+      const tgtSnap=await getDoc(doc(db,'schedules',`${sw.targetId}_${sw.weekId}`));
+      const reqData=reqSnap.exists()?{...reqSnap.data()}:{uid:sw.requesterId,weekId:sw.weekId};
+      const tgtData=tgtSnap.exists()?{...tgtSnap.data()}:{uid:sw.targetId,weekId:sw.weekId};
+      const rd='d'+sw.requesterDayIdx,td='d'+sw.targetDayIdx;
+      // Swap only the specific slot indices
+      const reqSlots=[...(reqData[rd]||[])];
+      const tgtSlots=[...(tgtData[td]||[])];
+      const reqSlot=reqSlots.splice(sw.requesterSlotIdx,1,null)[0];
+      const tgtSlot=tgtSlots.splice(sw.targetSlotIdx,1,null)[0];
+      if(reqSlot&&tgtSlot){
+        reqSlots[sw.requesterSlotIdx]=tgtSlot;
+        tgtSlots[sw.targetSlotIdx]=reqSlot;
+      }
+      reqData[rd]=reqSlots.filter(Boolean);
+      tgtData[td]=tgtSlots.filter(Boolean);
+      await setDoc(doc(db,'schedules',`${sw.requesterId}_${sw.weekId}`),reqData);
+      await setDoc(doc(db,'schedules',`${sw.targetId}_${sw.weekId}`),tgtData);
+    }
+    await updateDoc(doc(db,'swaps',swapId),{status,decidedAt:new Date().toISOString()});
+    loading(false);
+    toast(status==='approved'?'Swap approved and applied!':'Swap declined.',status==='approved'?'ok':'err');
+  },status==='approved'?'Approve':'Decline',status==='declined');
+}
+
+// ════════════════════════════════
+// EMPLOYEE INIT
+// ════════════════════════════════
+function initEmployee(ud){
+  showPage('page-employee');
+  document.getElementById('e-name').textContent=ud.name||'Employee';
+  document.getElementById('e-avatar').textContent=initials(ud.name);
+  startClock('e-clock');
+  const tick=()=>{
+    const cl=document.getElementById('e-live-clock');const dt=document.getElementById('e-live-date');
+    if(cl)cl.textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    if(dt)dt.textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+  };
+  tick();setInterval(tick,1000);
+  document.getElementById('lv-date').value=dateKey(new Date());
+  const monday=getMonday(),weekId=dateKey(monday);
+  unsub1=onSnapshot(doc(db,'schedules',`${currentUser.uid}_${weekId}`),snap=>{
+    renderEmpSchedule(snap.exists()?snap.data():{},monday);
+  });
+  unsub2=onSnapshot(collection(db,'leaves'),snap=>{
+    const myLeaves=snap.docs.map(d=>({id:d.id,...d.data()})).filter(l=>l.empId===currentUser.uid);
+    renderLeaveHistory(myLeaves);
+  });
+  unsub3=onSnapshot(collection(db,'swaps'),snap=>{
+    const mySwaps=snap.docs.map(d=>({id:d.id,...d.data()})).filter(s=>s.requesterId===currentUser.uid||s.targetId===currentUser.uid);
+    renderEmpSwaps(mySwaps);
+  });
+}
+
+function renderEmpSchedule(data,monday){
+  const today=dateKey(new Date());
+  const todayIdx=(new Date().getDay()+6)%7;
+  const hours=getDayHoursFromSched(data);
+  const total=Object.values(hours).reduce((a,b)=>a+b,0);
+  const workDays=Object.values(hours).filter(h=>h>0).length;
+  const avg=workDays>0?(total/workDays).toFixed(1):0;
+  document.getElementById('e-total').textContent=total.toFixed(1)+'h';
+  document.getElementById('es-week').textContent=total.toFixed(1)+'h';
+  document.getElementById('es-days').textContent=workDays;
+  document.getElementById('es-off').textContent=7-workDays;
+  document.getElementById('es-avg').textContent=avg+'h';
+  const endW=new Date(monday);endW.setDate(monday.getDate()+6);
+  document.getElementById('e-week-range').textContent=`${fmtDate(monday)} – ${fmtDate(endW)}`;
+  // next shift
+  let nextShift='No upcoming shifts',nextHrs='';
+  for(let i=todayIdx;i<7;i++){
+    const slots=getDaySlotsFromData(data,i).filter(sl=>sl.s&&sl.e);
+    if(slots.length){const d=new Date(monday);d.setDate(monday.getDate()+i);nextShift=d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});nextHrs=slots.map(sl=>`${fmtTime(sl.s)} – ${fmtTime(sl.e)} (${timeDiff(sl.s,sl.e).toFixed(1)}h)`).join(' + ');break;}
+  }
+  if(nextShift==='No upcoming shifts'){
+    for(let i=0;i<todayIdx;i++){const slots=getDaySlotsFromData(data,i).filter(sl=>sl.s&&sl.e);if(slots.length){const d=new Date(monday);d.setDate(monday.getDate()+i);nextShift=d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});nextHrs=slots.map(sl=>`${fmtTime(sl.s)} – ${fmtTime(sl.e)}`).join(' + ');break;}}
+  }
+  document.getElementById('e-next-shift').textContent=nextShift;
+  document.getElementById('e-next-hrs').textContent=nextHrs;
+  // table headers
+  const head=document.getElementById('e-sched-head');
+  head.innerHTML='<th style="text-align:left;font-size:11px;">Info</th>'+DAYS.map((_,i)=>{
+    const d=new Date(monday);d.setDate(monday.getDate()+i);const isT=dateKey(d)===today;
+    return`<th class="${isT?'today-th':''}">${DAYS[i]}<br><span style="font-weight:400;font-size:10px;opacity:.8;">${fmtDate(d)}</span></th>`;
+  }).join('');
+  // rows
+  const body=document.getElementById('e-sched-body');
+  const shiftRow='<tr><td class="row-label">Shift</td>'+DAYS.map((_,i)=>{
+    const d=new Date(monday);d.setDate(monday.getDate()+i);const isT=dateKey(d)===today;
+    const slots=getDaySlotsFromData(data,i).filter(sl=>sl.s&&sl.e);
+    if(!slots.length)return`<td><div class="shift-display off">Off</div></td>`;
+    return`<td><div class="slot-wrap">${slots.map(sl=>`<div class="shift-display${isT?' today-shift':''}">${fmtTime(sl.s)}<br>–<br>${fmtTime(sl.e)}</div>`).join('')}</div></td>`;
+  }).join('')+'</tr>';
+  const hrsRow='<tr><td class="row-label" style="color:var(--brand);">Hours</td>'+DAYS.map((_,i)=>{
+    const h=hours[i];
+    return`<td style="text-align:center;font-weight:700;color:${h>0?'var(--brand)':'var(--text3)'};font-size:12px;">${h>0?h.toFixed(1)+'h':'—'}</td>`;
+  }).join('')+'</tr>';
+  body.innerHTML=shiftRow+hrsRow;
+  // progress bar
+  const pct=Math.min(100,(total/40)*100);
+  document.getElementById('e-bar').style.width=pct+'%';
+  document.getElementById('e-bar-lbl').textContent=`${total.toFixed(1)} / 40h`;
+  // breakdown
+  const brkEl=document.getElementById('e-breakdown');
+  brkEl.innerHTML=DAYS.map((_,i)=>{
+    const d=new Date(monday);d.setDate(monday.getDate()+i);const isT=dateKey(d)===today;
+    const slots=getDaySlotsFromData(data,i).filter(sl=>sl.s&&sl.e);
+    return`<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px;">
+      <div><span style="font-weight:${isT?700:500};color:${isT?'var(--brand)':'var(--text)'};">${DAYS_FULL[i]}</span>${isT?'<span class="chip ch-blue" style="margin-left:7px;font-size:9px;">Today</span>':''}</div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+        <span style="font-size:11px;color:var(--text3);">${fmtDate(d)}</span>
+        ${slots.length?slots.map(sl=>`<span class="chip ch-blue">${fmtTime(sl.s)} – ${fmtTime(sl.e)}</span>`).join('')+'<span class="chip ch-green">'+hours[i].toFixed(1)+'h</span>':'<span class="chip ch-gray">Off</span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function changeWeek(dir){
+  currentWeekStart.setDate(currentWeekStart.getDate()+(dir*7));
+  const weekId=dateKey(currentWeekStart);
+  if(unsub1)unsub1();
+  unsub1=onSnapshot(doc(db,'schedules',`${currentUser.uid}_${weekId}`),snap=>{
+    renderEmpSchedule(snap.exists()?snap.data():{},new Date(currentWeekStart));
+  });
+}
+
+// ─── TEAM SCHEDULE (Employee) ───
+async function loadTeamSchedule(){
+  const monday=teamWeekStart;
+  const weekId=dateKey(monday);
+  const endW=new Date(monday);endW.setDate(monday.getDate()+6);
+  document.getElementById('team-week-range').textContent=`${fmtDate(monday)} – ${fmtDate(endW)}`;
+  const usersSnap=await getDocs(collection(db,'users'));
+  const employees=usersSnap.docs.map(d=>d.data()).filter(u=>u.role==='employee');
+  const schedResults=await Promise.all(employees.map(emp=>
+    getDoc(doc(db,'schedules',`${emp.uid}_${weekId}`)).then(s=>({emp,sched:s.exists()?s.data():null}))
+  ));
+  const today=dateKey(new Date());
+  document.getElementById('allsched-head').innerHTML='<th>Employee</th>'+DAYS.map((d,i)=>{
+    const dt=new Date(monday);dt.setDate(monday.getDate()+i);const isT=dateKey(dt)===today;
+    return`<th class="${isT?'today-col':''}">${d}<br><span style="font-weight:400;">${fmtDate(dt)}</span></th>`;
+  }).join('');
+  const body=document.getElementById('allsched-body');
+  if(!schedResults.length){body.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--text3);">No employees found.</td></tr>`;return;}
+  body.innerHTML=schedResults.map(r=>{
+    const isSelf=r.emp.uid===currentUser.uid;
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:8px;">
+        <div class="avatar" style="width:27px;height:27px;font-size:10px;">${initials(r.emp.name)}</div>
+        <div><strong>${r.emp.name}</strong>${isSelf?'<span class="chip ch-blue" style="margin-left:5px;font-size:9px;">You</span>':''}</div>
+      </div></td>
+      ${DAYS.map((_,dayIdx)=>{
+        if(!r.sched)return`<td><span class="day-off-pill">Off</span></td>`;
+        const slots=getDaySlotsFromData(r.sched,dayIdx).filter(sl=>sl.s&&sl.e);
+        if(!slots.length)return`<td><span class="day-off-pill">Off</span></td>`;
+        // Each individual shift has its own swap button
+        const shiftItems=slots.map((sl,slotIdx)=>{
+          const label=`${fmtTime(sl.s)}–${fmtTime(sl.e)}`;
+          const swapBtn=!isSelf?`<button class="btn btn-purple btn-sm swap-from-btn" onclick="requestSwap('${r.emp.uid}','${r.emp.name.replace(/'/g,"\\'")}',${dayIdx},${slotIdx},'${weekId}','${label}')">⇄ Swap</button>`:'';
+          return`<div class="day-shift-cell" style="margin-bottom:4px;"><span class="day-shift-pill">${label}</span>${swapBtn}</div>`;
+        }).join('');
+        return`<td>${shiftItems}</td>`;
+      }).join('')}
+    </tr>`;
+  }).join('');
+}
+function changeTeamWeek(dir){
+  teamWeekStart=new Date(teamWeekStart);teamWeekStart.setDate(teamWeekStart.getDate()+(dir*7));loadTeamSchedule();
+}
+
+// ─── SHIFT SWAP (Employee) — per individual shift ───
+function requestSwap(targetId,targetName,targetDayIdx,targetSlotIdx,weekId,targetShiftLabel){
+  // Get employee's own schedule to show their shifts
+  let myDaySelect=`<div style="margin-top:12px;"><label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);display:block;margin-bottom:5px;">Select YOUR day to swap from:</label><select id="swap-my-day" class="app-sel" style="width:100%;">`;
+  DAYS.forEach((d,i)=>{myDaySelect+=`<option value="${i}">${DAYS_FULL[i]}</option>`;});
+  myDaySelect+=`</select></div>
+  <div style="margin-top:10px;"><label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);display:block;margin-bottom:5px;">Your shift slot # (1 = first shift that day):</label>
+  <select id="swap-my-slot" class="app-sel" style="width:100%;">
+    <option value="0">Slot 1</option><option value="1">Slot 2</option><option value="2">Slot 3</option>
+  </select></div>
+  <div style="margin-top:10px;"><label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);display:block;margin-bottom:5px;">Note (optional):</label>
+  <textarea id="swap-msg" class="app-in" style="width:100%;min-height:55px;resize:none;" placeholder="e.g. I have a doctor's appointment..."></textarea></div>`;
+
+  openModal('🔄 Request Shift Swap',
+    `You want to swap a shift with ${targetName}'s ${DAYS_FULL[targetDayIdx]} shift: ${targetShiftLabel}. Select which of your shifts to offer in return.`,
+    async()=>{
+      const myDay=parseInt(document.getElementById('swap-my-day').value);
+      const mySlotIdx=parseInt(document.getElementById('swap-my-slot').value);
+      const msg=(document.getElementById('swap-msg')?.value||'').trim();
+      // Get my own shift label
+      const mySnap=await getDoc(doc(db,'schedules',`${currentUser.uid}_${weekId}`));
+      const myData=mySnap.exists()?mySnap.data():{};
+      const mySlots=getDaySlotsFromData(myData,myDay).filter(sl=>sl.s&&sl.e);
+      const mySlot=mySlots[mySlotIdx];
+      const myShiftLabel=mySlot?`${fmtTime(mySlot.s)}–${fmtTime(mySlot.e)}`:`Slot ${mySlotIdx+1}`;
+      loading(true);
+      await addDoc(collection(db,'swaps'),{
+        requesterId:currentUser.uid,requesterName:currentUserData?.name||currentUser.email,
+        targetId,targetName,
+        requesterDayIdx:myDay,requesterSlotIdx:mySlotIdx,requesterShiftLabel:myShiftLabel,
+        targetDayIdx,targetSlotIdx,targetShiftLabel,
+        weekId,message:msg,status:'pending',createdAt:new Date().toISOString()
+      });
+      loading(false);toast('Swap request sent!','ok');
+    },'Send Request',false,myDaySelect);
+}
+
+function renderEmpSwaps(swaps){
+  const badge=document.getElementById('e-swap-badge');
+  const incoming=swaps.filter(s=>s.targetId===currentUser.uid&&s.status==='pending');
+  badge.style.display=incoming.length?'inline':'none';badge.textContent=incoming.length;
+  const el=document.getElementById('emp-swap-list');
+  if(!swaps.length){el.innerHTML=`<div class="empty"><div class="ico">🔄</div><p>No swap requests yet.</p></div>`;return;}
+  const sorted=[...swaps].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  el.innerHTML=sorted.map(s=>{
+    const isSender=s.requesterId===currentUser.uid;
+    const statusChip={
+      pending:'<span class="chip ch-yellow">Waiting for Response</span>',
+      employee_accepted:'<span class="chip ch-sky">Awaiting Admin Approval</span>',
+      approved:'<span class="chip ch-green">✓ Approved</span>',
+      declined:'<span class="chip ch-red">✗ Declined</span>'
+    }[s.status]||'';
+    const canRespond=!isSender&&s.status==='pending';
+    return`<div class="swap-row ${s.status==='pending'?'pending-swap':s.status==='approved'?'approved-swap':s.status==='declined'?'declined-swap':''}">
+      <div style="font-size:24px;">🔄</div>
+      <div class="swap-info">
+        <div class="swap-title">${isSender?`You → ${s.targetName}`:`${s.requesterName} → You`}</div>
+        <div class="swap-detail">
+          ${isSender
+            ?`Offering your <strong>${DAYS_FULL[s.requesterDayIdx]}</strong> shift <em>(${s.requesterShiftLabel||'?'})</em> in exchange for ${s.targetName}'s <strong>${DAYS_FULL[s.targetDayIdx]}</strong> shift <em>(${s.targetShiftLabel||'?'})</em>`
+            :`${s.requesterName} wants to swap their <strong>${DAYS_FULL[s.requesterDayIdx]}</strong> <em>(${s.requesterShiftLabel||'?'})</em> for your <strong>${DAYS_FULL[s.targetDayIdx]}</strong> shift <em>(${s.targetShiftLabel||'?'})</em>`}
+          · Week: ${s.weekId}
+        </div>
+        ${s.message?`<div class="leave-reason">"${s.message}"</div>`:''}
+        <div class="swap-badges" style="margin-top:6px;">${statusChip}</div>
+      </div>
+      ${canRespond?`<div class="appr-acts">
+        <button class="btn btn-success btn-sm" onclick="respondSwap('${s.id}','employee_accepted')">✓ Accept</button>
+        <button class="btn btn-danger btn-sm" onclick="respondSwap('${s.id}','declined')">Decline</button>
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+async function respondSwap(swapId,status){
+  openModal(status==='employee_accepted'?'Accept Swap':'Decline Swap',
+    status==='employee_accepted'?'Accept this swap? Admin will give final approval.':'Decline this swap request?',
+    async()=>{
+      loading(true);await updateDoc(doc(db,'swaps',swapId),{status,respondedAt:new Date().toISOString()});
+      loading(false);toast(status==='employee_accepted'?'Accepted! Waiting for admin.':'Swap declined.',status==='employee_accepted'?'ok':'err');
+    },status==='employee_accepted'?'Accept':'Decline',status==='declined');
+}
+
+// ─── LEAVE (Employee) ───
+async function submitLeave(){
+  const date=document.getElementById('lv-date').value;
+  const type=document.getElementById('lv-type').value;
+  const reason=document.getElementById('lv-reason').value.trim();
+  if(!date){toast('Please select a date.','err');return;}
+  const snap=await getDoc(doc(db,'users',currentUser.uid));
+  const empName=snap.exists()?snap.data().name:currentUser.email;
+  loading(true);
+  await addDoc(collection(db,'leaves'),{empId:currentUser.uid,empName,date,type,reason:reason||'',status:'pending',createdAt:new Date().toISOString()});
+  loading(false);
+  document.getElementById('lv-reason').value='';
+  toast('Leave request submitted!','ok');
+}
+function renderLeaveHistory(leaves){
+  const el=document.getElementById('e-leave-history');
+  if(!leaves.length){el.innerHTML=`<div class="empty"><div class="ico">📋</div><p>No requests yet.</p></div>`;return;}
+  const sorted=[...leaves].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  el.innerHTML=sorted.map(l=>{
+    const chip=l.status==='pending'?`<span class="chip ch-yellow">Pending</span>`:l.status==='approved'?`<span class="chip ch-green">Approved</span>`:`<span class="chip ch-red">Declined</span>`;
+    const d=new Date(l.date+'T00:00:00');
+    return`<div class="leave-row">
+      <div class="leave-info">
+        <div class="leave-name">${l.type}</div>
+        <div class="leave-detail">${d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric',year:'numeric'})}</div>
+        ${l.reason?`<div class="leave-reason">"${l.reason}"</div>`:''}
+      </div>${chip}
+    </div>`;
+  }).join('');
+
+
+}
+  window.addEventListener("load", () => {
+  const hash = window.location.hash;
+
+  if (hash === "#signup") {
+    showPage("page-signup");
+  } else if (hash === "#login") {
+    showPage("page-login");
+  }
+});
+
+</script>
+</body>
+</html>
